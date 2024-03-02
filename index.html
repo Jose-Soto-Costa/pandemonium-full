@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+    <title>Pandemonium</title>
+     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>
+    
+    body {
+   	background-color:black;
+   	min-width:1078px;
+   	}
+   	
+   	img {
+   	 border-radius: 5px;
+      border:  10px solid black;
+   	}
+   	
+    .background {
+ 	  background-image: url('https://www.ne.se/info/wp-content/uploads/2019/05/ne-se-franskaomslag-1200x815.jpg');
+ 	  background-size: cover;
+ 	  background-repeat: no-repeat;
+	   }
+	
+	 .content {
+	 margin: 70px 100px 0px 100px;
+	 color: white;
+	 }
+	 
+	
+	.title {
+    text-align:Center; 
+    padding:0px 10px 30px 10px;
+    color:white;
+    font-size: xx-large;
+    }
+	
+	.image {
+    text-align:Center; 
+    margin:30px 0px 30px 0px;
+    margin-bottom:30px;
+    }
+    
+    .part{
+    padding-top:30px;
+   	background-color:rgb(0,0,0,0.7);
+   	border: 2px solid darkred;
+  	border-radius: 5px;
+  	margin-top:30px;	
+    }
+    
+    .text{
+   	margin:90px 90px 60px 90px;
+
+    }
+
+    .center{
+    text-align:Center; 
+
+    }
+    
+    .subtitle {
+    text-align:Center; 			
+    }
+    
+    .form-control {
+    margin-top:15px;
+    padding:3px;
+    }
+
+    .attributes{
+      margin-top:60px;
+    }
+
+    .name{
+    color:red;
+    font-weight: bold;
+    }
+
+    .quotes{
+    font-style: italic;
+    }
+  
+    .item-title{
+    color:red;
+    }
+  
+    .field{
+    font-weight: bold;
+    }
+
+    .selector{
+    text-align:Center;
+    }
+
+    .btn{
+      margin:1px;
+    }
+
+    a:link {
+  color: darkred;
+}
+
+
+a:visited {
+  color: darkred;
+}
+
+}
+a:hover {
+  color: red;
+}
+
+a:active {
+  color: red;
+}
+    
+    @media(min-width: 2152px) {
+  		
+  		body {
+   		margin-left:12%;	
+ 		margin-right:12%;
+  		}
+	}
+	
+	@media(max-width: 1248px) {
+  		
+  		.content {
+  			margin: 20px 1px 15px 1px;
+  		}
+  		.part{
+    	margin-top:1px;	
+    	border: 0px solid darkred;		
+    	}
+	}
+	 
+    
+    </style>
+
+	<body>
+	
+	<div id="app">
+    	<app-view>
+    	  <app-content v-bind:data="data">
+    	  </app-content>
+		</app-view>
+	</div>
+	
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript" src="vue.js"></script>
+    <script>
+    
+    function update(){
+  	  
+      console.log(lore.data);
+  		localStorage['data'] =  JSON.stringify(lore.data);
+
+    }
+    
+    function deletes(current , old){
+
+        const type = current[0];
+      const key = current[1][type]
+      const hell = current[1].hell
+
+      let ret = {};
+
+      let oldEntries = Object.entries(old)
+
+      for (const [att, final] of oldEntries){
+
+        let attributeEntries = Object.entries(final);
+       
+        for (const [origin, finales] of attributeEntries){
+
+          if (finales[type]){
+
+             ret[att] = final[origin];
+          }
+        }
+      }
+
+      console.log(ret);
+      return ret;
+    }
+
+    function skills(current , old){
+
+      const type = current[0];
+      const key = current[1][type]
+      const hell = current[1].hell
+
+
+      let skills = lore.hells[hell][(type === "kin")? "kindred" : "origins"][key].skills;
+
+      let newSkills = {};
+
+    
+
+
+      skills = Object.entries(skills) 
+
+      for (const [origin, final] of skills){
+
+        if (final.field === "premade"){
+
+          let attRaw = lore.skills.premade[final.id].att;
+          let attFinal = "";
+
+          switch(attRaw) {
+          case "(Migth)":
+          attFinal ="migthSkills";
+          break;
+          case "(Cunning)":
+          attFinal ="cunningSkills";
+          break;
+          case"(Darkness)":
+          attFinal ="darknessSkills";
+          }
+
+          final.key = final.id;
+
+          final.title = lore.skills.premade[final.id].title;
+
+          if(final.title.includes("Elemental")){
+
+            final.id = "element";
+          }
+            
+          if(final.title.includes("Weapon/Combat")){
+
+            final.id = "combatTraining";
+          }
+          
+           if(final.title.includes("Craft/Job")){
+
+            final.id = "craftMastery";
+          }
+
+           if(final.title.includes("Dark Master")){
+
+            final.id = "master";
+          }
+
+
+
+
+          old[attFinal][final.id] = {
+
+          att:"premade",
+          group:final.key,
+          name:final.id,
+          kin:false,
+          origin:false,
+          upgraded:false}
+          ;
+
+          old[attFinal][final.id][type] = true;
+
+          (final.id === "necromancy") ? old[attFinal][final.id].upgraded = true : "";
+
+        }
+      } 
+
+
+      return old;
+
+    }
+    
+    
+    function origin(value)
+    {
+
+        let resp = { hell: "" , origin: "" , info:{} };
+
+        let hell = lore.hells;
+        
+        let hells = Object.entries(hell);
+
+        for (const [hell, content] of hells) {
+      
+          let origins = Object.entries(content.origins);
+
+            for (const [origin, final] of origins) {
+      
+              if(final.name === value){
+
+                resp.hell = content.name;
+                resp.origin = final.type;
+
+
+                if(final.conditions){
+                  
+                  let info = Object.entries(final.conditions);
+
+                  for (const [key, end] of info) {
+
+                  resp.info[key] = "";
+                  console.log(key);
+
+                  }
+              }
+
+                break;
+              }
+      
+          }
+      
+        }
+
+        return resp;
+    }
+
+    function kin(value)
+    {
+
+        let resp = { kin: "" , origin: "", info:{} };
+
+        let hell = lore.hells;
+        
+        let hells = Object.entries(hell);
+
+       
+        for (const [hell, content] of hells) {
+      
+          let kindred = Object.entries(content.kindred);
+
+
+            for (const [kin, final] of kindred) {
+      
+              if(final.name=== value){
+
+                console.log(final);
+
+                resp.hell = content.name;
+                resp.kin = final.type;
+
+                if(final.conditions){
+
+                  let info = Object.entries(final.conditions);
+
+                  for (const [key, end] of info) {
+
+                 resp.info[key] = "";
+
+                  }
+              }
+
+                break;
+              }
+      
+          }
+      
+        }
+
+        return resp;
+    }
+
+
+        
+
+   
+    Vue.component('app-view', {
+  
+   	 template:  
+
+    		    '<div class="background">' +
+    		    		'<slot></slot>' +
+    		    '</div>' 
+    		
+   })
+   
+   Vue.component('app-content', {
+	 props: ['data'],
+   	 template:  
+   		'<div class="content">' + 
+   			' <div class="part">'+
+   		 		'<div class= "title"><h1>RPG Pandemonium</h1></div>' +
+   		 	' </div>' +
+   		 	
+   			'<intro v-bind:data="data">' +
+			'</intro>' +
+			
+			'<attributes v-bind:data="data">' +
+			'</attributes>' +
+
+      '<origins v-bind:data="data">' +
+      '</origins>' +
+
+      '<skills v-bind:data="data">' +
+      '</skills>' +
+   		'</div>'  		
+   })
+  
+   Vue.component('intro', {
+	 props: ['data'],
+   data(){
+     return {
+        lore: lore
+      }
+    },
+   	 template:  
+   		' <div class="part">'+
+   			'<image-item v-bind:image="lore.text.intro.image">' +
+   			'</image-item>' +
+   			'<subtitle><h3>Introduction:</h3></subtitle>' +
+   			'<text-item v-bind:text="lore.text.intro">' +
+			'</text-item>' +
+   		' </div>'
+   })
+
+   Vue.component('skills', {
+   props: ['data'],
+   data(){
+     return {
+        lore: lore,
+        att: 1,
+      }
+    },
+     template:  
+      ' <div class="part">'+
+        '<image-item v-bind:image="lore.skills.info.image">' +
+        '</image-item>' +
+        '<subtitle><h3>Starting Skills:</h3></subtitle>' +
+        '<text-item v-bind:text="lore.skills.info">' +
+        '</text-item>' +
+        '<skill-selector :data="data" v-model="att"/>' +
+        '<skill-data :data="data" v-for="group in lore.skills.attributes" :key="group.key" v-show="isVisible(group.number)":name="group.key"/>' +
+      ' </div>',
+
+      methods:{
+      isVisible: function(number){
+        
+          if (number === this.att ){
+            return  true; 
+          }
+          return false;
+        },
+      },
+   })
+
+    Vue.component('skill-selector', {
+       props: ['data' , 'value'],
+        data(){
+        return {
+          lore: lore,
+          inputVal:this.value,
+         
+        }
+      },
+       template:  
+       '<div class="text selector">' +  
+        '<span v-for="(att , key) in lore.skills.attributes" :key="key" :class="isActive(att.number)" @click="choose(att.number)" >{{att.name}}</span>' + 
+        '</div>',
+
+         methods: {
+       
+
+         choose: function(number){
+        
+          this.inputVal = number;
+        },
+
+        isActive: function(number){
+        
+          if (number === this.value ){
+            return  "btn btn-danger"; 
+          }
+          return "btn btn-secondary";
+        },
+
+        
+       },
+       watch: {
+      inputVal(val) {
+      this.$emit('input', val);
+    }
+  }
+    })
+   
+   
+  Vue.component('skill-data', {
+   props: ['data' , 'name'],
+   data(){
+     return {
+        lore: lore,
+      }
+     
+   },
+     template:  
+      ' <div class="data">'+
+        '<div class="text center"> <h5><span class="field">{{getName(name)}} Skills</span></h5></div>' +
+        '<base-skill :data="data" :name="name"/>' +
+      
+      '</div>',
+
+      methods: {
+
+         getName: function(name){
+
+          return name.charAt(0).toUpperCase() + name.slice(1)
+
+         },
+       
+        isActive: function(number){
+
+          console.log("vy");
+        
+          if (number === this.value ){
+            return  "btn btn-danger"; 
+          }
+          return "btn btn-secondary";
+        },
+       },
+   })
+
+   Vue.component('base-skill', {
+   props: ['data' , 'name'],
+   data(){
+     return {
+        lore: lore,
+        hideShow: "Hide",
+        one1: "one",
+        two2: "two",
+        uni3: "unique",
+        legend1: "legend",
+        pen1: "pen",
+        sk: "Skills",
+        currentSkill:{title:"", group:"base", id:"base"},
+        currentUp:{title:"", group:"base", id:"base"},
+        currentPremium:{title:"", group:"base", id:"base"},
+        currentPen:{title:"", group:"base", id:"base"},
+        example: "llopo",
+        example2: "llopo",
+      }
+     
+   },
+     template:  
+      '<div class="form-group">'+
+              
+        '<div class="text"><p><span class="field">All {{lore.skills.attributes[name].name}} Skills: </span> <span class="btn btn-danger" @click="toggleShow"> {{hideShow}} All</span></p><br/>' +
+        
+
+        '<div class="all" v-show="isHidden()"><span class="field">Dark Prince {{lore.skills.info[name].one}} Skills: </span><br/><br/><skill2 ' +
+        'v-for="skill in lore.skills[name + 1].one" ' +
+        'v-bind:skill="skill" :key="skill.title" />' +
+
+        '<br/><br/><span class="field">Dark Prince {{lore.skills.info[name].two}} Skills: </span><br/><br/><skill2 ' +
+        'v-for="skill in lore.skills[name + 1].two" ' +
+        'v-bind:skill="skill" :key="skill.title" />' +
+
+        '<br/><br/><span class="field">Dark Prince Kindred Unique Skills: </span><br/><br/><skill2 ' +
+        'v-for="skill in lore.skills[name + 1].unique" ' +
+        'v-bind:skill="skill":key="skill.title" />' +
+
+        '<br/><br/><span class="field">Legendary Skills:</span><br/><br/><skill2 ' +
+        'v-for="skill in lore.skills[name + 1].legend" ' +
+        'v-bind:skill="skill" :key="skill.title" />' +
+
+        '<br/><br/><span class="field">Penalties:</span><br/><br/><skill2 ' +
+        'v-for="skill in lore.skills[name + 1].pen" ' +
+        'v-bind:skill="skill" ' +
+        
+        ':key="skill.title" /><span class="btn btn-danger"  @click="toggleShow"> {{hideShow}} All</span></p></div></div>' +
+
+           '<attributes-stars :data="data" :name="lore.skills.attributes[name].name" :number="this.$root.getNumber(this.name)"/>' +
+ '<div class="text"> <p><span class="field">Choose a Dark Prince Skill</span></p>'+
+ 
+ '<select class="form-control bg-secondary text-light" v-model="currentSkill" id="origin" >'+
+            
+            '<optgroup :label="lore.skills.info[name].one"> <option v-for="(skillOne , key)  in lore.skills[name + 1].one" :key="skillOne.title" :value="{value:skillOne.title , group:one1, id:key}"  v-show="free(key)">{{skillOne.title}}</option></optgroup>' +
+            
+            '<optgroup  :label="lore.skills.info[name].two"><option v-for="(skill2 , key)  in lore.skills[name + 1].two"  :key="skill2.title" :value="{value:skill2.title , group:two2 ,id:key}" v-show="free(key)">{{skill2.title}}</option></optgroup>' +
+           
+            '<optgroup  label="Kindred Unique Skills"><option v-for="(skill3 , key) in lore.skills[name + 1].unique"  :key="skill3.title" :value="{value:skill3.title , group:uni3, id:key }" v-show="free(key)">{{skill3.title}}</option></optgroup></select><br/>' +
+
+      '<skill2 :skill="lore.skills[name + 1][currentSkill.group][currentSkill.id]" :key="lore.skills[name + 1][currentSkill.group][currentSkill.id].title"/>'+
+      
+
+         '<div>' +
+            '<input @change="addSkillInfo($event.target.value)"type="text" class="form-control bg-secondary text-light"' +
+            ':placeholder="example" v-show="avaliable()" :value="example"></p>'+
+          '</div>' +
+
+       '<span class="btn btn-danger" @click="addSkill(currentSkill)">Add Skill</span><span class="field">Cost 1(*)</span><br/><br/><br/>'+
+
+       ' <p><span class="field">Upgrade a Dark Prince Skill to an Overlord Level</span></p>'+
+
+       '<select class="form-control bg-secondary text-light" v-model="currentUp" id="origin" >'+
+       '<option v-for="(skillOne , key)  in noUpgraded()" :key="skillOne.title" :value="{value:skillOne.title , group:skillOne.group, id:key}"  >{{skillOne.title}}</option></select>' +
+
+       '<span class="btn btn-danger" @click="upgradeSkill(currentUp)">Upgrade Skill</span><span class="field">Cost 2(*)</span><br/><br/><br/>'+
+
+       
+       '<p><span class="field">Choose a Legendary Skill</span></p>'+
+
+       '<select class="form-control bg-secondary text-light" v-model="currentPremium" id="origin" >'+
+       '<option v-for="(skillOne , key)  in  lore.skills[name + 1].legend" :key="skillOne.title" :value="{value:skillOne.title , group:legend1, id:key}" v-show="free(key)" >{{skillOne.title}}</option></select>' +
+
+        '<skill2 :skill="lore.skills[name + 1][currentPremium.group][currentPremium.id]" :key="lore.skills[name + 1][currentPremium.group][currentPremium.id].title + 3"/>'+
+
+         '<div>' +
+            '<input @change="addSkillInfo2($event.target.value)"type="text" class="form-control bg-secondary text-light"' +
+            ':placeholder="example" v-show="avaliable2()" :value="example2"></p>'+
+          '</div>' +
+
+          '<span class="btn btn-danger" @click="addSkill3(currentPremium)">Add Legendary Skill</span><span class="field">Cost 3(*)</span><br/><br/><br/>'+
+           
+        
+        '<p><span class="field">Choose a Penalty</span></p>'+
+
+        '<select class="form-control bg-secondary text-light" v-model="currentPen" id="origin" >'+
+       '<option v-for="(skillOne , key)  in  lore.skills[name + 1].pen" :key="skillOne.title" :value="{value:skillOne.title , group:pen1, id:key}" v-show="free(key)">{{skillOne.title}}</option></select>' +
+
+        '<skill2 :skill="lore.skills[name + 1][currentPen.group][currentPen.id]" :key="lore.skills[name + 1][currentPen.group][currentPen.id].title + 8"/>'+
+
+        '<span class="btn btn-danger" @click="addPen(currentPen)">Add Penalty</span><span class="field">Get +1(*)</span><br/><br/><br/>'+
+
+
+       '</div> ' +
+
+      '<div class="text">  <span class="field">Your {{lore.skills.attributes[name].name}} Starting Skills: </span><br/><br/>' +
+      '<skill3 ' +
+        'v-for="skill in changes" ' +
+        'v-bind:skill="skill" :show="(!skill.kin && !skill.origin)" :name="skill.name" :key="skill.name" />' +
+
+      '</div>'+
+
+      
+      '</div>',
+
+      methods: {
+
+        avaliable: function(){
+
+         const example = this.lore.skills[this.name + 1][this.currentSkill.group][this.currentSkill.id].example;
+
+        if(example){
+          
+          this.example = example;
+          return true;
+        }
+        return false;
+
+
+          },
+
+          avaliable2: function(){
+
+         const example2 = this.lore.skills[this.name + 1][this.currentPremium.group][this.currentPremium.id].example;
+
+        if(example2){
+          
+          this.example2 = example2;
+          return true;
+        }
+        return false;
+
+
+          },
+
+          values: function(example){
+
+          const info = this.data.origin.info[this.text.key];
+
+            if(info){
+
+              return info;
+
+            } else {
+
+              return example;
+            }
+          
+          },
+
+           addSkillInfo: function(value){
+
+            console.log("bye");
+            Vue.set(this.$root.info, [this.currentSkill.id] , value);
+
+              this.$root.data.skills.info = this.$root.info;
+              this.$root.update();
+          },
+
+          addSkillInfo2: function(value){
+
+            Vue.set(this.$root.info, [this.currentPremium.id] , value);
+
+              this.$root.data.skills.info = this.$root.info;
+              this.$root.update();
+          },
+       
+
+         toggleShow: function(){
+        
+          if (this.hideShow === "Show" ){
+
+            this.hideShow = "Hide";
+
+          }else{
+
+             this.hideShow = "Show";
+          }
+        },
+
+        isActive: function(number){
+        
+          if (number === this.value ){
+            return  "btn btn-danger"; 
+          }
+          return "btn btn-secondary";
+        },
+
+        noUpgraded: function(){
+        
+          let items = {};
+
+          const cunningSkills = Object.values(this.$root[this.name + this.sk]);
+
+          for(const content of cunningSkills){
+
+            if(!content.upgraded){
+
+              if(content.att !== "premade"){
+
+                items[content.name] = this.lore.skills[content.att][content.group][content.name];
+              } else {
+
+
+                  items[content.name] = this.lore.skills.premade[content.group];
+              }
+
+              
+
+            }
+          }
+
+          console.log(items);
+          return items;
+        },
+
+        free: function(value){
+
+          if(this.$root[this.name + this.sk][value]){
+            return false;
+          } 
+
+            return true;
+        },
+
+        newSkill:function(current){
+
+          this.currentSkill = {title:"", group:"base", id:"base"};
+          this.currentPremium = {title:"", group:"base", id:"base"};
+          this.currentPen = {title:"", group:"base", id:"base"};
+           
+          let value = {
+          att: this.name + 1,
+          group: current.group,
+          name: current.id,
+          upgraded:false,
+          kin:false,
+          origin:false,
+        }
+
+        Vue.set( this.$root[this.name + this.sk], current.id, value);
+        this.$root.data.skills = { migthSkills:this.$root.migthSkills , cunningSkills:this.$root.cunningSkills , darknessSkills:this.$root.darknessSkills};
+        this.$root.update();
+
+        
+
+        },
+
+        addSkill: function(current){
+
+        console.log(current);
+
+          if (current.group !== "base" && (this.$root.getNumber(this.name) > 0)){
+
+          this.newSkill(current);
+          this.$root["starCost" + this.name]++ ;
+        }
+
+        },
+
+        addPen: function(current){
+
+
+        if (current.group !== "base" ){
+          this.newSkill(current);
+          this.$root["starCost" + this.name]-- ;
+          }
+        
+        },
+
+
+
+        addSkill3: function(current){
+
+          console.log(current);
+
+          if (current.group !== "base" && (this.$root.getNumber(this.name) > 2)){
+
+        
+          this.newSkill(current);  
+          this.$root["starCost" + this.name] += 3 ;
+        }
+
+        },
+
+         upgradeSkill: function(current){
+
+        if(this.$root.getNumber(this.name) > 1 && current.group !== "base" ) {
+
+
+        Vue.set( this.$root[this.name + this.sk][current.id], "upgraded", true);
+        this.$root.data.skills = { migthSkills:this.$root.migthSkills , cunningSkills:this.$root.cunningSkills , darknessSkills:this.$root.darknessSkills};
+        this.$root.update();
+
+        this.$root["starCost" + this.name] += 2 ;
+        }
+            
+
+        },
+
+
+         isHidden: function(){
+        
+          if (this.hideShow === "Show" ){
+            return  false; 
+          }
+          return true;
+        },
+
+        legend: function(){
+
+          this.$root["starCost" + this.name] -= 2;
+        },
+
+        pen: function(name){
+
+          if(this.$root.getNumber(this.name) > 0){
+
+            this.removeSkill2(name);
+            this.$root["starCost" + this.name] += 2;
+
+          } else {
+
+            window.alert("You Have Skills using this Attributes");
+
+          }
+        },
+
+        removeSkill2: function(skill){
+
+
+          old = this.$root.data.skills;
+        
+        let oldEntries = Object.entries(old)
+
+          for (const [att, final] of oldEntries){
+
+          let attributeEntries = Object.entries(final);
+       
+          for (const [origin, finales] of attributeEntries){
+
+              if (finales.name === skill){
+
+                console.log(att , origin);
+
+                Vue.delete( this.$root[att], origin);
+
+                const llopo = this.$root[att];
+                this.$root[att] = llopo;
+          
+              }
+          }
+        this.$root.data.skills[att] = this.$root[att];
+        this.$root.update();
+
+
+        } 
+
+        this.$root["starCost" + this.name]--
+        },  
+
+         removeUpgrade: function(skill){
+
+        
+
+
+          const att = this.name + this.sk;
+         
+        this.$root[att][skill].upgraded = false;
+        this.$root.data.skills[att] = this.$root[att];
+        this.$root.update();
+
+
+        this.$root["starCost" + this.name] -= 2;
+        },
+
+
+          calculations: function(value){
+        
+          return value;
+        },
+ 
+        
+       },
+
+       computed: {
+  
+    changes: function () {
+  
+    return this.$root[this.name + this.sk];
+        } 
+    },
+       watch: {
+      inputVal(val) {
+      this.$emit('input', val);
+    }
+  },
+
+  })
+
+
+   Vue.component('attributes-stars', {
+       data(){
+        return {
+          lore: lore
+        }
+      },
+      props: ['data' , 'name' , 'number'],
+       template:  
+        ' <div class="text center">'+
+        '<p><strong>({{name}}) Remaining stars:</strong></p><star-item v-for="n in number" v-bind:key="n"> </star-item>' +
+        '</div>'
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   Vue.component('attributes', {
+	 props: ['data'],
+	 data(){
+		 return {
+	      lore: lore
+	    }
+		 
+	 },
+   	 template:  
+   		' <div class="part">'+
+   		
+   			'<image-item v-bind:image="lore.text.attributes.image">' +
+   			'</image-item>' +
+   			'<subtitle><h3>Character Creation</h3></subtitle>' +
+			'<subtitle><h5>Part I Attributes:</h5></subtitle>' +
+			'<form-item tag="Name:" v-bind:text="data.name"></form-item>' +
+   			'<text-item v-bind:text="lore.text.attributes">' +
+			'</text-item>' +
+			'<attributes-item v-bind:data="data">' +
+			'</attributes-item>' +
+   		' </div>'
+   })
+
+   Vue.component('origins', {
+   props: ['data'],
+   data(){
+     return {
+        lore: lore
+      }
+     
+   },
+     template:  
+      ' <div class="part">'+
+      
+        '<image-item v-bind:image="lore.text.origins.image">' +
+        '</image-item>' +
+      '<subtitle><h5>Part II Origins:</h5></subtitle>' +
+      '<text-item v-for="(part, key) in lore.text.origins.parts"' +
+      ':key="key"' +
+      'v-bind:text="part">' +
+       '</text-item>'  +
+
+       '<hell-selector id="hell" :data="data"/>' +
+
+      '<hell v-for="hell in lore.hells"' +
+      ':key="hell.name"' +
+      'v-bind:text="hell" v-show="isActive(hell.page)">' +
+
+      '</hell>' +
+
+      '<div class="text name"><h3><a href="#hell">Return to Hells</a></h3></div>'+
+      '<origin-selector :data="data"/>' +
+     
+      ' </div>',
+
+       methods: {
+        isActive: function(hell){
+        
+          if(this.data.page === hell){
+            return true;
+          }
+          return false;
+        },
+       }
+   })
+   
+   Vue.component('image-item', {
+	 props: ['image'],
+   	 template:  
+   		' <div class="image">'+
+   			'<img :src="image">' +
+   			'<slot></slot>' +
+   		' </div>'
+   })
+   
+      Vue.component('text-item', {
+      	 props: ['text'],
+      	 template:  
+      		' <div class="text">'+
+       		'<p> <strong>{{ text.title }} </strong> {{ text.subtitle }} </p>' +
+       		'<p-item v-for="(line, index) in text.description"' +
+       		'v-bind:text="line"  v-bind:key="index">'+
+       		'</p-item>'+
+          '<line-item v-for="(line, index) in text.list"' +
+          'v-bind:text="line" '+
+          'v-bind:key="line.title">'+
+          '</line-item>'+
+       		'</div>'
+      })
+  
+     Vue.component('attributes-item', {
+    	 data(){
+        return {
+          lore: lore
+        }
+      },
+      props: ['data'],
+    	 template:  
+    		' <div class="text">'+
+     		'<p><strong>(Remaining stars):</strong></p><star-item v-for="n in data.totalStars" v-bind:key="n"> </star-item>' +
+        '<attribute v-for="att in lore.skills.attributes" :att="att" :data="data" v-bind:key="att.name"> </attribute>' +
+     		'</div>'
+    })
+
+     Vue.component('hell', {
+       data(){
+        return {
+          lore: lore
+        }
+      },
+      props: ['text'],
+       template:  
+        ' <div class="hell">'+
+        '<image-item v-bind:image="text.image">' +
+        '</image-item>' +
+        '<text-item v-bind:text="text">' +
+        '</text-item>' +
+
+         '<div class="text"><p><span class="field"> Hell Traits</span> (This skills are for all Origins)</span></p><br/>' +
+         '<skill ' +
+        'v-for="skill in text.skills"' +
+        'v-bind:skill="lore.skills[skill.field][skill.id]"' +
+        ':key="lore.skills[skill.field][skill.id].title"/></div>' +
+
+         '<div class="text"> <p><span class="field"> Hell Origins</span> (Remenber that in most cases you can pick kindred from other hells.)</p><br/>'+
+
+           '<overlords v-for="(lord , key) in text.origins" :text="lord" :key="lord.name + key"/>' +
+
+         '</div>' +
+
+          '<div class="text"> <p><span class="field"> Hell Kindred</span> (Remenber that in most cases you can pick origins from other hells.)</p><br/>'+
+
+            '<kindred v-for="kin in text.kindred"' +
+          'v-bind:text="kin" '+
+          'v-bind:key="kin.name">'+
+          '</kindred>'+
+
+         '</div>' +
+       
+        '</div>'
+    })
+
+
+      Vue.component('attribute', {
+       props: ['att' , 'data'],
+        data(){
+        return {
+          lore: lore
+        }
+      },
+       template:  
+        '<div class="attributes">'+
+        '<p><span class="name">{{att.name}} </span> <span class="quotes">“ {{att.quotes}}” </span> Arquetype: <span class="field">  {{att.arch}}</span> </p>' +
+        '<p> ({{ att.info }})</p>'+
+        '<span class="add btn btn-danger" @click="addStar"> Add</span> <span class="rem btn btn-dark" @click="remStar(att)"> Remove </span>' +
+        '<star-item v-for="n in data[att.stars]" v-bind:key="n"/>' +
+        '</div>' ,
+
+         methods: {
+        addStar: function(){
+        
+      
+        let stars = this.data[this.att.stars];
+        let totalStars = this.data.totalStars;
+
+        if( stars < 5 && totalStars > 0)
+          {
+
+            this.$root.data[this.att.stars] += 1;
+            this.$root.data.totalStars -= 1;
+            this.$root.update();
+          }
+         
+        },
+         remStar: function(att){
+
+          const code = "starCost";
+          console.log(this.$root.getNumber(att.key));
+
+          if (this.$root.getNumber(att.key) > 0){
+        
+        let stars = this.data[this.att.stars];
+        let totalStars = this.data.totalStars;
+          if( stars > 2 ){
+
+          this.$root.data[this.att.stars] -= 1;
+          this.$root.data.totalStars += 1;
+          this.$root.update();
+          }
+        } else {
+          window.alert("You Have Skills using this Attribute")
+        }
+
+        },
+
+       }
+    })
+    
+    Vue.component('star-item', {
+    	 props: ['lore'],
+    	 template:  
+    		 '<span class="star"> <img style="width:60px"src="https://image.flaticon.com/icons/png/512/1914/1914155.png"></span>'
+    })
+    
+    Vue.component('subtitle', {
+    	 props: ['text'],
+    	 template:  
+     		'<div class="subtitle">' +  
+     		'<slot></slot>' +
+     		'</div>'
+    })
+
+    Vue.component('line-item', {
+       props: ['text'],
+       template:  
+        '<p> <span class="name"> {{ text.title }} </span> {{ text.body }} </p>'
+    })
+    
+    Vue.component('p-item', {
+    	 props: ['text'],
+    	 template:  
+     		'<p> {{ text }} </p>'
+    })
+
+    Vue.component('origin-selector', {
+       props: ['data'],
+        data(){
+        return {
+          lore: lore,
+          llopo: "pure",
+        }
+      },
+       template:  
+        '<div class="text">'+
+          '<div class="form-group">'+
+            '<label for="kindred" class="field">Your Origin:</label>'+
+            '<select v-show="enougthAtt" class="form-control bg-secondary text-light" :value="lore.hells[data.origin.hell].origins[data.origin.origin].name" id="origin" @change="chooseOrigin($event.target.value)">'+
+            '<group v-for="hell in lore.hells" :key="hell.name" :hell="hell" :text="hell.origins" :data="data"/>' +
+            '</select>' +
+          '</div>' +
+          '<p v-show="!enougthAtt"> Your Skills are using Attributes from your Origin. Remove the necesary skills to change an origin </p>' +
+
+          '<conditional v-for="con in lore.hells[data.origin.hell].origins[data.origin.origin].conditions" :data="data" :text="lore.conditional[con]":key="lore.conditional[con].id"/> ' +
+
+
+          '<div class="form-group">'+
+            '<label for="kindred" class="field">Your Kindred:</label>'+
+            '<select v-show="enougthAttKin" class="form-control bg-secondary text-light" :value="lore.hells[data.kin.hell].kindred[data.kin.kin].name" '+
+            '@change="chooseKin($event.target.value)">'+
+            '<group v-for="hell in lore.hells" :key="hell.name" :hell="hell" :text="hell.kindred" :data="data"/>' +
+            '</select>' +
+          '</div>' +
+           '<p v-show="!enougthAttKin"> Your Skills are using Attributes from your Kindred. Remove the necesary skills to change an origin </p>' +
+
+          '<conditional v-for="con in lore.hells[data.kin.hell].kindred[data.kin.kin].conditions" :data="data" :text="lore.conditional[con]":key="lore.conditional[con].id"/> ' +
+
+
+          '<div v-show="isPure() && enougthAttKin">' +
+            '<p><span class="name">Pure Adaptability:</span> Choose an extra Attribute</p>'+
+           '<select :value="data.kin.info.pure" @change="addInfo($event.target.value , llopo)" class="form-control bg-secondary text-light" id="origin" >'+
+               '<option  v-for="att in lore.skills.attributes"  :key="att.name">{{att.name}}</option>'+
+           '</select>' +
+          '</div>' +
+
+        '</div>',
+
+          methods: {
+
+
+          deletes: function(current , old){
+
+          const type = current[0];
+          const key = current[1][type]
+          const hell = current[1].hell
+
+          let ret = {};
+
+          let oldEntries = Object.entries(old)
+
+          for (const [att, final] of oldEntries){
+
+          let attributeEntries = Object.entries(final);
+       
+          for (const [origin, finales] of attributeEntries){
+
+          if (finales[type]){
+
+            console.log(att , origin);
+
+            Vue.delete( this.$root[att], origin);
+          }
+        }
+      }
+
+      
+     
+      },
+
+
+
+
+        chooseOrigin: function(value){
+
+          
+          let llopo = origin(value);
+
+        this.$root.data.origin.hell = llopo.hell;
+        this.$root.data.origin.origin = llopo.origin;
+        this.$root.data.origin.info = { ...this.$root.data.origin.info, ...llopo.info};
+
+        let skillsOld = this.data.skills;
+        let skillsDelete = deletes(["origin" ,llopo], skillsOld);
+
+        this.deletes(["origin" ,llopo], skillsOld);
+        
+        skillsNew = skills(["origin" ,llopo] , skillsOld);
+
+        Vue.set( this.$root.data, "skills", skillsNew);
+        Vue.set( this.$root, "migthSkills", skillsNew.migthSkills);
+        Vue.set( this.$root, "cunningSkills", skillsNew.cunningSkills);
+        Vue.set( this.$root, "darknessSkills", skillsNew.darknessSkills);
+
+        this.$root.migthSkills = skillsNew.migthSkills;
+        this.$root.cunningSkills = skillsNew.cunningSkills;
+        this.$root.darknessSkills = skillsNew.darknessSkills;
+
+        this.$root.update();
+          
+        },
+
+        chooseKin: function(value){
+
+          let llopo = kin(value);
+
+        this.$root.data.kin.hell = llopo.hell;
+        this.$root.data.kin.kin = llopo.kin;
+        this.$root.data.kin.info = { ...this.$root.data.kin.info, ...llopo.info};
+
+        let skillsOld = this.data.skills;
+
+        this.deletes(["kin" ,llopo], skillsOld);
+
+        skillsNew = skills(["kin" ,llopo] , skillsOld);
+
+        Vue.set( this.$root.data, "skills", skillsNew);
+        Vue.set( this.$root, "migthSkills", skillsNew.migthSkills);
+        Vue.set( this.$root, "cunningSkills", skillsNew.cunningSkills);
+        Vue.set( this.$root, "darknessSkills", skillsNew.darknessSkills);
+
+        this.$root.migthSkills = skillsNew.migthSkills;
+        this.$root.cunningSkills = skillsNew.cunningSkills;
+        this.$root.darknessSkills = skillsNew.darknessSkills;
+
+        this.$root.update();
+          
+        },
+
+         addInfo: function(value , name){
+
+        console.log(value, name);
+        this.$root.data.kin.info[name] = value;
+
+        this.$root.update();
+          
+        },
+
+         isConditional: function(){
+        
+          if(lore.hells[data.origin.hell].origins[data.origin.origin].condition){
+
+            return true;
+          
+          } else {
+
+
+
+            return false;
+          }
+
+        },
+
+         
+
+         isPure: function(){
+
+                           
+          if((this.data.kin.hell === "pragaras") && (this.data.kin.kin === "five")){
+
+            return true;
+          
+          } else {
+
+
+            return false;
+          }
+        },
+
+
+        
+       },
+
+       computed: {
+         enougthAtt: function(){
+
+
+           const att = this.$root.addOri;
+        
+          if( att !=="none"){
+            
+            if(att !== "luci"){
+              
+              if(this.$root.getNumber(att) > 0){
+              
+                return true;
+              }
+            } else {
+
+               if(this.$root.getNumber("darkness") > 1){
+              
+                return true;
+              }
+            }
+           return false;
+          }
+          return true;
+
+        },
+         enougthAttKin: function(){
+
+          const att = this.$root.addKin;
+
+           console.log(att);
+        
+          if( att !=="none" && att !== undefined){
+              
+              if(this.$root.getNumber(att) > 0){
+              
+                return true;
+              }
+              return false;
+          }
+          return true;
+
+        },
+
+        
+
+
+       }
+
+
+    })
+
+     Vue.component('group', {
+       props: ['data' , 'hell' , 'text'],
+        data(){
+        return {
+          lore: lore
+        }
+      },
+       template:  
+        '<optgroup  :label="hell.title">'+
+            '<option v-for="ori in text" v-show=(isUnique(ori)) :hell="hell.name" :id="ori.type" :key="ori.name">{{ori.name}}</option>' +
+        '</optgroup>',
+
+        methods:{
+
+          isUnique: function(value){
+
+            if(value.unique){
+
+              const unique = value.only;
+
+              if(this.data.origin.hell === unique){
+
+                return true;
+              }
+
+              return false;
+
+            }
+            return true;
+
+          },
+        },
+    
+
+
+    })
+
+       Vue.component('conditional', {
+       props: ['data' , 'text'],
+        data(){
+        return {
+          lore: lore
+        }
+      },
+       template:  
+        '<div>' +
+            '<p><span class="name">{{text.name}}:</span> {{ text.tutorial }}'+
+            '<input @change="addInfo(text.id , $event.target.value)"type="text" class="form-control bg-secondary text-light"' +
+            ':placeholder="text.example" :value="values(text.example)"></p>'+
+          '</div>' ,
+
+        methods: {
+        values: function(example){
+
+          const info = this.data.origin.info[this.text.key];
+
+          if(info){
+
+            return info;
+
+      } else {
+
+            return example;
+          }
+          
+        },
+
+         addInfo: function(id , value){
+
+
+          if(this.$root.data.origin.info[id] !== undefined){
+
+          this.$root.data.origin.info[id] = value;
+
+          } else if(this.$root.data.kin.info[id] !== undefined){
+
+          this.$root.data.kin.info[id] = value;
+          }
+          
+          this.$root.update();
+        },
+
+      },
+    })
+
+     Vue.component('hell-selector', {
+       props: ['data'],
+        data(){
+        return {
+          lore: lore
+        }
+      },
+       template:  
+       '<div class="text selector">' +  
+        '<span class="page btn btn-secondary" @click="prev">Prev</span>' +
+        '<span v-for="(hell , key) in lore.hells" :key="key" :class=" isActive(hell.page)" @click="choose(hell.page)">{{hell.page}}</span>' + 
+         '<span class="page btn btn-secondary" @click="next">Next</span>' +
+        '</div>',
+
+         methods: {
+        next: function(){
+        
+         let current = this.data.page;
+
+          if(current < 7)
+          {
+            this.$root.data.page += 1;
+            this.$root.update();
+          }
+          
+        },
+
+         prev: function(){
+        
+           let current = this.data.page;
+
+          if(current > 1)
+          {
+            this.$root.data.page -= 1;
+            this.$root.update();
+          }
+        },
+
+         choose: function(number){
+        
+          this.$root.data.page = number;
+          this.$root.update();
+        },
+
+        isActive: function(number){
+        
+          if (number === this.data.page ){
+            return  "btn btn-danger"; 
+          }
+          return "btn btn-secondary";
+        },
+       }
+    })
+    
+    Vue.component('form-item', {
+    	 props: ['text' , 'tag'],
+    	 data(){
+    		 return {
+    	      name:"text"
+    	    }
+  
+    	 },
+    	 
+    	 template:  
+      		 '<div class="text"><p><Strong>{{tag}}</Strong> <br/> <input type="text" class="form-control bg-secondary text-light" id="name" placeholder="" v-on:change="update" :value="text" @input="name = $event.target.value"></p></div>' ,
+    	
+    	 methods: {
+  	 		update: function(){
+  	 		
+          this.$root.data.name = this.name;
+  	 			this.$root.update();
+  	 		},
+    	 }
+    })
+
+     Vue.component('kindred', {
+       data(){
+        return {
+          lore: lore
+        }
+      },
+        props: ['text'],
+        template:  
+        '<div class="kin">' +
+        '<p><span class="field">{{ text.name }}:</span> {{ text.unique }}</p>' +
+        '<p-item :text="text.description"/>' +
+        '<skill ' +
+        'v-for="skill in text.skills"' +
+        'v-bind:skill="lore.skills[skill.field][skill.id]"' +
+        ':key="lore.skills[skill.field][skill.id].title">' +
+        '</skill><br/>' +
+       
+      '</div>'
+      })
+
+      Vue.component('overlords', {
+       data(){
+        return {
+          lore: lore
+        }
+      },
+        props: ['text'],
+        template:  
+        '<div class="lords">' +
+        '<p><span class="field">{{ text.name }}:</span><span class="item-title"> ({{ text.type}}) </span></p>' +
+        '<p-item v-for="(line ,key) in text.description" :key="key" :text="line"/>' +
+        '<skill ' +
+        'v-for="skill in text.skills"' +
+        'v-bind:skill="lore.skills[skill.field][skill.id]"' +
+        ':key="lore.skills[skill.field][skill.id].title">' +
+        '</skill><br/>' +
+       
+      '</div>'
+      })
+      
+    Vue.component('skill', {
+
+       props: ['skill'],
+       template:  
+        '<p>' +
+        ' <span class="field"> {{ skill.field }} </span> <span> {{ skill.att}} </span>' +
+        '<span class="item-title"> {{ skill.title }} </span>' +
+        '<span class="quotes"> "{{ skill.quotes }}" </span> <br/>' +
+
+        '({{ skill.description}})' +
+      '</p>'
+    })
+
+    Vue.component('skill2', {
+
+       data(){
+        return {
+          counter:0
+        }
+      },
+
+       props: ['skill'],
+       template:  
+        '<p>' +
+        ' <span class="field" v-show="skill.only">(Only for {{skill.only}}) </span>' +
+        '<span class="item-title"> {{ skill.title }} </span>' +
+        '<span class="quotes"> "{{ skill.quotes }}" </span> <br/>' +
+
+        '({{ skill.description}})' +
+      '</p>',
+      methods: {
+        count: function(){
+        
+          this.counter++;
+          return this.counter;
+        },
+       }
+    })
+
+     Vue.component('skill3', {
+
+       data(){
+        return {
+          counter:0,
+          skillNow:this.checkSkill(),
+        }
+      },
+
+       props: ['skill' , 'show', 'name'],
+       template:  
+        '<p>' +
+
+        '<span v-show="showS(skill)" class="btn btn-secondary" @click="removeSkill(skill)">Remove</span>' +
+        '<span v-show="showUp(skill)" class="btn btn-secondary" @click="removeUpgrade(name)">Remove Upgrade</span>' +
+        '<span class="field" v-show="skillNow.only">(Only for {{skillNow.only}}) </span>' +
+        '<span class="item-title"> {{ skillNow.title }} {{ info(skill.name) }}</span>' +
+        '<span class="quotes"> "{{ skillNow.quotes }}" </span> {{ isUpgraded(skill)}} <br/>' +
+
+        '({{ skillNow.description}})' +
+      '</p>',
+      methods: {
+        checkSkill: function(){
+
+          if (this.skill.att === "premade"){
+
+            skill = lore.skills.premade[this.skill.group];
+
+
+          }else {
+
+            skill = lore.skills[this.skill.att][this.skill.group][this.skill.name];
+          }
+        
+          return skill;
+        },
+
+        removeSkill: function(skill){
+          
+          let name = skill.name;
+
+          if(skill.group === "pen"){
+
+            this.$parent.pen(name);
+          } else {
+
+         this.$parent.removeSkill2(name);
+
+         
+         if(skill.group === "legend"){
+            
+            this.$parent.legend(name);
+          }
+        }
+        },
+
+        removeUpgrade: function(skill){
+
+        ;
+
+         this.$parent.removeUpgrade(skill);
+        },
+
+        isUpgraded: function(skill){
+
+         if(skill.upgraded){
+
+           return "( Upgraded )";
+         }
+
+         return "";
+        },
+
+        showUp: function(skill){
+
+         if(skill.upgraded && (!this.isBlackListed(skill))){
+
+           return true;
+         }
+
+         return false;
+        },
+
+         showS: function(skill){
+
+         if(this.show && !this.showUp(skill)){
+
+          return true;
+         } else {
+          return false;
+         }
+        },
+
+        isBlackListed: function(skill){
+
+          const kin = {
+
+            necromancy: true,
+
+
+          };  
+
+          const ori = {
+
+
+          };  
+
+
+         if(skill.kin)
+         {
+
+           if(kin[skill.name]){
+
+            return true;
+           }
+
+
+
+         }else if (skill.origin){
+
+           if(ori[skill.name]){
+
+            return true;
+           }
+
+         }
+         return false
+       },
+
+        info: function(data){
+
+          const info = this.$root.info[data];
+
+          if (info){
+
+            return "(" + info +")";
+          
+          } else {
+
+            return "";
+
+          }
+        },
+       }
+    })
+   
+   
+    var app = new Vue({
+    	  el: '#app',
+    	  data: {
+
+          lore: lore,
+    	    data: lore.data,
+
+          migthSkills: lore.data.skills.migthSkills,
+
+          cunningSkills:{},
+          
+          darknessSkills:{},
+
+          info:{},
+
+           starCostmigth: 0,
+          starCostcunning: 0,
+          starCostdarkness: 0,
+
+          addOri: "migth",
+          addKin: "none",
+    
+    	  },
+      	 	methods: {
+      	 		
+      	 		update: function(){
+      	 			
+              localStorage['data'] =  JSON.stringify(this.data);
+      	 		},
+    	  		
+    	  		start: function(){
+	 			           if (localStorage['data']){
+                local =  JSON.parse(localStorage['data']);
+                this.data = local;
+
+                
+	 			       }
+             },  
+
+             getNumber: function(name){
+
+         
+          const origin = this.lore.hells[this.data.origin.hell].origins[this.data.origin.origin];
+          const kin = this.lore.hells[this.data.kin.hell].kindred[this.data.kin.kin];
+          let lost = "none";
+          let luci = false; 
+
+          if(kin.lost){
+
+            let str = this.data.kin.info.pure;
+            lost = str.toLowerCase();
+            this.addKin = lost;
+          }
+
+          if(origin.luci){
+
+            luci = true;
+          }
+        
+          if(name === 'migth'){
+
+            let stars = this.data.starsM;
+
+            (lost === name) ? stars++ : stars;
+
+            (origin.plusM) ? stars++ : stars;
+            (origin.plusM) ? this.$root.addOri = "migth" : stars;
+
+            (origin.minusM) ? stars++ : stars;
+
+            (kin.minusM) ? stars-- : stars;
+
+
+            stars -= this["starCost" + name];
+
+           
+
+            return stars
+          }
+
+           if(name === 'cunning'){
+
+            let stars = this.data.starsC;
+
+            (lost === name) ? stars++ : stars;
+
+            (origin.plusC) ? stars++ : stars;
+            (origin.plusC) ? this.$root.addOri = "cunning" : stars;
+
+            (origin.minusC) ? stars++ : stars;
+
+            (kin.minusC) ? stars-- : stars;
+
+            stars -= this["starCost" + name];
+
+
+            return stars
+          }
+
+           if(name === 'darkness'){
+
+            let stars = this.data.starsD;
+
+            (lost === name) ? stars++ : stars;
+
+            (origin.plusD) ? stars++ : stars;
+            (origin.plusD) ? this.$root.addOri = "darkness" : stars;
+
+            (origin.minusD) ? stars++ : stars;
+
+            (luci) ? stars++ : stars;
+            (luci) ? this.$root.addOri = "luci" : stars;
+
+            (kin.minusD) ? stars-- : stars;
+
+            stars -= this["starCost" + name];
+
+            return stars
+          }
+        },
+      	 	},
+    	    beforeMount(){
+
+            lore.skills.premade = { 
+              ...lore.skills.premade,
+              ...lore.skills.migth1.one, 
+              ...lore.skills.migth1.two, 
+              ...lore.skills.migth1.unique,
+              ...lore.skills.cunning1.one,
+              ...lore.skills.cunning1.two,
+              ...lore.skills.cunning1.unique,
+              ...lore.skills.darkness1.one,
+              ...lore.skills.darkness1.two,
+              ...lore.skills.darkness1.unique,
+            };
+    	    	//this.start();
+    	    },
+
+          
+
+    	  
+    	})
+    
+    
+    </script>
+	</body>
+</html>
